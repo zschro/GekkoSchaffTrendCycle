@@ -31,15 +31,13 @@ var strategy = {
     const longConditions = [
       this.trend !== 'long',
       result >= this.threshold_low,
-      previousResult < this.threshold_low,
-      result > this.threshold_high + this.threshold_adjustment
+      previousResult < this.threshold_low
       ].reduce((total, long) => long && total, true);
 
     const shortConditions = [
       this.trend !== 'short',
       result <= this.threshold_high,
-      previousResult > this.threshold_high,
-      result < this.threshold_low - this.threshold_adjustment
+      previousResult > this.threshold_high
       ].reduce((total, short) => short && total, true);
 
     if(longConditions){
