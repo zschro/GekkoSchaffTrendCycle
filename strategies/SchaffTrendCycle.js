@@ -50,6 +50,14 @@ var strategy = {
       this.indicators.zTrailingStop.short(candle.close);
       this.advice('short');
     }
+    else if(this.trend == 'long' && result < this.threshold_low - this.threshold_adjustment){
+      this.trend = 'short';
+      this.advice('short');
+    }
+    else if(this.trend == 'short' && result > this.threshold_high + this.threshold_adjustment){
+      this.trend = 'long';
+      this.advice('long');
+    }
 
   },
 
