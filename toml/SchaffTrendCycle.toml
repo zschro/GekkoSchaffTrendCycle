@@ -1,12 +1,8 @@
-threshold_buy = 1.0
-threshold_sell = -1.0
-method = 'adadelta'
-
-learning_rate = 1.2
-momentum = 0.9
-decay = 0.10
-stoploss_enabled = false
-stoploss_threshold = 0.85
-hodl_threshold = 1
-price_buffer_len = 100
-min_predictions = 1000
+length = 5
+fastLength = 9
+slowLength = 30
+factor = 0.5
+threshold_high = 80
+threshold_low = 20
+stoploss_threshold = 5
+threshold_adjustment = 5
