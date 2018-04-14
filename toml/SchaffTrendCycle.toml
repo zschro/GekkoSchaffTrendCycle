@@ -1,4 +1,4 @@
-length = 5
+stcLength = 5
 fastLength = 9
 slowLength = 30
 factor = 0.5
