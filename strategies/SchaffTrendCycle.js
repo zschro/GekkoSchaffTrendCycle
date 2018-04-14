@@ -58,23 +58,15 @@ var strategy = {
       result < this.threshold_low - this.threshold_adjustment
       ].reduce((total, short) => short && total, true);
 
-    if(longConditions){
+    if(longConditions || falseSignalLongConditions){
       this.trend = 'long';
       this.indicators.zTrailingStop.long(candle.close);
       this.advice('long');
     }
-    else if(shortConditions){
+    else if(shortConditions || falseSignalShortConditions){
       this.trend = 'short';
       this.indicators.zTrailingStop.short(candle.close);
       this.advice('short');
-    }
-    else if(falseSignalShortConditions){
-      this.trend = 'short';
-      this.advice('short');
-    }
-    else if(falseSignalLongConditions){
-      this.trend = 'long';
-      this.advice('long');
     }
 
   },
