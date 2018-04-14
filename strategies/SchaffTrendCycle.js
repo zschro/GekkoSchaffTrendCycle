@@ -8,8 +8,14 @@ var strategy = {
     this.settings.threshold_high ? this.threshold_high = this.settings.threshold_high : this.threshold_high = 80;
     this.settings.threshold_low ? this.threshold_low = this.settings.threshold_low : this.threshold_low = 20;
     this.settings.threshold_adjustment ? this.threshold_adjustment = this.settings.threshold_adjustment : this.threshold_adjustment = 5;
-    this.addIndicator('zTrailingStop', 'zTrailingStop', this.settings.stoploss_threshold);
+    this.settings.adjust_false_signal ? this.adjust_false_signal = this.settings.adjust_false_signal : this.adjust_false_signal = true;
+    this.settings.enable_stop_loss ? this.enable_stop_loss = this.settings.enable_stop_loss : this.enable_stop_loss = true;
+    
     this.addIndicator('STC', 'STC', this.settings);
+    if(this.enable_stop_loss)
+    {
+      this.addIndicator('zTrailingStop', 'zTrailingStop', this.settings.stoploss_threshold);
+    }
   },
   update : function(candle)
   {
@@ -19,7 +25,7 @@ var strategy = {
 
   check : function(candle) {
 
-    if(this.indicators.zTrailingStop.shouldSell)
+    if(this.enable_stop_loss && this.indicators.zTrailingStop.shouldSell)
     {
       this.indicators.zTrailingStop.short(candle.close);
       return this.advice('short');
@@ -40,6 +46,18 @@ var strategy = {
       previousResult > this.threshold_high
       ].reduce((total, short) => short && total, true);
 
+    const falseSignalLongConditions = [
+      this.adjust_false_signal,
+      this.trend == 'short',
+      result > this.threshold_high + this.threshold_adjustment
+      ].reduce((total, long) => long && total, true);
+
+    const falseSignalShortConditions = [
+      this.adjust_false_signal,
+      this.trend == 'long',
+      result < this.threshold_low - this.threshold_adjustment
+      ].reduce((total, short) => short && total, true);
+
     if(longConditions){
       this.trend = 'long';
       this.indicators.zTrailingStop.long(candle.close);
@@ -50,11 +68,11 @@ var strategy = {
       this.indicators.zTrailingStop.short(candle.close);
       this.advice('short');
     }
-    else if(this.trend == 'long' && result < this.threshold_low - this.threshold_adjustment){
+    else if(falseSignalShortConditions){
       this.trend = 'short';
       this.advice('short');
     }
-    else if(this.trend == 'short' && result > this.threshold_high + this.threshold_adjustment){
+    else if(falseSignalLongConditions){
       this.trend = 'long';
       this.advice('long');
     }
